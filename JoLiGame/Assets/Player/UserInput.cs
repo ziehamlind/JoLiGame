@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RTS;
+using UnityEngine.Audio;
 
 public class UserInput : MonoBehaviour {
 
     private Player player;
+    public AudioSource SoundOnClick;
 
     void Start () {
         player = transform.root.GetComponent<Player>();
@@ -103,17 +105,22 @@ public class UserInput : MonoBehaviour {
             Vector3 hitPoint = FindHitPoint();
             if (hitObject && hitPoint != ResourceManager.InvalidPosition)
             {
-                if (player.SelectedObject) player.SelectedObject.MouseClick(hitObject, hitPoint, player);
-                else if (hitObject.name != "Ground")
-                {
-                    WorldObject worldObject = hitObject.transform.root.GetComponent<WorldObject>();
+                if (player.SelectedObject) {
+                    SoundOnClick.Play();
+                    player.SelectedObject.MouseClick(hitObject, hitPoint, player);
+            }
+            else if (hitObject.name != "Ground")
+            {
+                WorldObject worldObject = hitObject.transform.root.GetComponent<WorldObject>();
+                    SoundOnClick.Play();
                     if (worldObject)
-                    {
+                {
                         //we already know the player has no selected object
+                        SoundOnClick.Play();
                         player.SelectedObject = worldObject;
-                        worldObject.SetSelection(true);
-                    }
+                    worldObject.SetSelection(true);
                 }
+            }
             }
         }
     }
