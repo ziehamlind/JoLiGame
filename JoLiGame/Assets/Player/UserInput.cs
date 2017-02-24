@@ -16,12 +16,12 @@ public class UserInput : MonoBehaviour {
 	void Update () {
         if (player.human){
             MoveCamera();
-            RotateCamera();
             MouseActivity();
         }
     }
     private void MoveCamera(){
 
+        RotateCamera();
         float xpos = Input.mousePosition.x;
         float ypos = Input.mousePosition.y;
         Vector3 movement = new Vector3(0, 0, 0);
@@ -138,19 +138,17 @@ public class UserInput : MonoBehaviour {
             if (hitObject && hitPoint != ResourceManager.InvalidPosition)
             {
                 if (player.SelectedObject) {
-                    SoundOnClick.Play();
                     player.SelectedObject.MouseClick(hitObject, hitPoint, player);
             }
             else if (hitObject.name != "Ground")
             {
                 WorldObject worldObject = hitObject.transform.root.GetComponent<WorldObject>();
-                    SoundOnClick.Play();
                     if (worldObject)
                 {
                         //we already know the player has no selected object
-                        SoundOnClick.Play();
+                        
                         player.SelectedObject = worldObject;
-                    worldObject.SetSelection(true);
+                    worldObject.SetSelection(true, player.hud.GetPlayingArea());
                 }
             }
             }
@@ -158,10 +156,20 @@ public class UserInput : MonoBehaviour {
     }
     //finding which object is clicked on 
     private GameObject FindHitObject(){
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit)) return hit.collider.gameObject;
-        return null;
+
+        if (Physics.Raycast(ray, out hit)) {
+
+            if (hit.collider.gameObject.name != "Ground") {
+                SoundOnClick.Play();
+            }
+            return hit.collider.gameObject;
+
+        } else {
+            return null;
+        }
     }
 
     private Vector3 FindHitPoint()
@@ -176,7 +184,7 @@ public class UserInput : MonoBehaviour {
     {
         if (player.hud.MouseInBounds() && !Input.GetKey(KeyCode.LeftAlt) && player.SelectedObject)
         {
-            player.SelectedObject.SetSelection(false);
+            player.SelectedObject.SetSelection(false, player.hud.GetPlayingArea());
             player.SelectedObject = null;
         }
     }

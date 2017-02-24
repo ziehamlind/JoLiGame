@@ -14,7 +14,20 @@ public class SunCycle : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Sun.transform.Rotate(Time.deltaTime*100,0,0);
-        
+        Sun.transform.Rotate(Time.deltaTime * 10, 0, 0);
+        if (Sun.transform.eulerAngles.x == 360)
+        {
+            Sun.transform.Rotate(0, 0, 0);
+        }
+
+        if (Sun.transform.eulerAngles.x > 181)
+        {
+            Sun.enabled = false;
+        }
+        if (Sun.transform.eulerAngles.x > 359)
+        {
+            Sun.enabled = true;
+        }
+
     }
 }
